@@ -1,0 +1,229 @@
+; ====================================================================
+;            Modification de champs dans la base Biblio.db
+;
+;   Création en février 2017 par B. MARCANT
+; ====================================================================
+;   Modification en ... par ...
+;     ...
+; ====================================================================
+
+
+; --------------------------------------------------------------------
+;  Variables
+; --------------------------------------------------------------------
+
+var
+	nomTab String
+	ficCsv String
+	hdlCsv TextStream
+	ficLog String
+	hdlLog TextStream
+	fbi FileBrowserInfo
+	nomScr String
+	tab tcursor
+	ligCsv String
+	colCsv Array[] String	
+	nbrCsv SmallInt
+	nbrTit SmallInt
+	nbrTab SmallInt
+	nbrAno SmallInt
+endvar
+
+
+; --------------------------------------------------------------------
+;  Initialisation
+; --------------------------------------------------------------------
+
+nomScr = "ModPapy3"
+nomTab = "Biblio.db"
+nbrCsv = 0
+nbrTit = 0
+nbrTab = 0
+nbrAno = 0
+
+
+; --------------------------------------------------------------------
+;  Partie principale
+; --------------------------------------------------------------------
+
+fbi.Title = "Sélection du fichier CSV"
+fbi.Path = "C:\\Program Files\\Bib\\Pap\\Papyrus\\Export\\"
+fbi.AllowableTypes = fbFiles
+
+if not filebrowser(ficCsv, fbi) then
+	msginfo(fbi.Title, "Opération annulée")
+	return
+endif
+
+ficCsv = fbi.Drive + fbi.Path + ficCsv
+ficLog = fbi.Drive + fbi.Path + nomScr + ".log"
+
+msginfo(nomScr, "Fichier LOG : " + ficLog)
+msginfo(nomScr, "Fichier CSV : " + ficCsv)
+
+if not hdlLog.open(ficLog, "nw") then
+	msginfo(nomScr, "Impossible d'ouvrir " + ficLog)
+	return
+endif
+
+if not hdlCsv.open(ficCsv, "r") then
+	msginfo(nomScr, "Impossible d'ouvrir " + ficCsv)
+	return
+endif
+
+hdlLog.writeLine("Script " + nomScr)
+hdlLog.writeLine("")
+hdlLog.writeLine("Début du traitement (" + strval(today()) + "-" + strval(time()) + ")")
+
+hdlCsv.readline(ligCsv)
+nbrCsv = nbrCsv + 1
+ligCsv.breakApart(colCsv, ";")
+
+colCsv.view()
+
+if colCsv[01].lower() = "reference" AND
+   colCsv[02].lower() = "titre" AND
+   colCsv[03].lower() = "auteur" AND
+   colCsv[04].lower() = "editeur" AND
+   colCsv[05].lower() = "code classement" AND
+   colCsv[06].lower() = "genre" AND
+   colCsv[07].lower() = "xsignet" AND
+   colCsv[14].lower() = "origine" AND
+   colCsv[15].lower() = "type de document" AND
+   colCsv[18].lower() = "lieu" AND
+   colCsv[21].lower() = "collection" AND
+   colCsv[22].lower() = "photo1" AND
+   colCsv[23].lower() = "son1" AND
+   colCsv[26].lower() = "format" AND
+   colCsv[28].lower() = "isbn" AND
+   colCsv[29].lower() = "issn" AND
+   colCsv[30].lower() = "etat" AND
+   colCsv[31].lower() = "nbex" AND
+   colCsv[32].lower() = "appreciation" AND
+   colCsv[33].lower() = "codebarre" AND
+   colCsv[34].lower() = "adrinternet" AND
+   colCsv[36].lower() = "pays ville" AND
+   colCsv[37].lower() = "tomaison" AND
+   colCsv[44].lower() = "periodicite" AND
+   colCsv[47].lower() = "systeme" AND
+   colCsv[48].lower() = "version" AND
+   colCsv[49].lower() = "son" AND
+   colCsv[50].lower() = "pellicule" AND
+   colCsv[51].lower() = "info" AND
+   colCsv[52].lower() = "numnotice" AND
+   colCsv[55].lower() = "nomfichiernotice" AND
+   colCsv[56].lower() = "nomoriginenotice" AND
+   colCsv[57].lower() = "alpha1" AND
+   colCsv[58].lower() = "alpha2" AND
+   colCsv[59].lower() = "alpha3" AND
+   colCsv[60].lower() = "num1" AND
+   colCsv[61].lower() = "num2" AND
+   colCsv[63].lower() = "public" then
+	nbrTit = nbrTit + 1
+else
+	msginfo(nomScr, "Les colonnes du fichier CSV ne sont pas celles attendues")
+	return
+endif
+
+tab.open(nomTab)
+tab.edit()
+
+hdlLog.writeLine("")
+
+while not hdlCsv.eof()
+	hdlCsv.readLine(ligCsv)
+	nbrCsv = nbrCsv + 1
+	ligCsv.breakApart(colCsv, ";")
+	if tab.locate("Reference", number(colCsv[01])) then
+		tab."Titre" = colCsv[02]
+		tab."Auteur" = colCsv[03]
+		tab."Editeur" = colCsv[04]
+		tab."Code Classement" = colCsv[05]
+		if colCsv[06] <> "" then
+			tab."Genre" = smallint(colCsv[06])
+		endif
+		if colCsv[07] <> "" then
+			tab."XSignet" = smallint(colCsv[07])
+		endif
+		tab."Origine" = colCsv[14]
+		if colCsv[15] <> "" then
+			tab."Type de document" = smallint(colCsv[15])
+		endif
+		if colCsv[18] <> "" then
+			tab."Lieu" = smallint(colCsv[18])
+		endif
+		tab."Collection" = colCsv[21]
+		tab."Photo1" = colCsv[22]
+		tab."Son1" = colCsv[23]
+		tab."Format" = colCsv[26]
+		tab."ISBN" = colCsv[28]
+		tab."ISSN" = colCsv[29]
+		tab."Etat" = colCsv[30]
+		if colCsv[31] <> "" then
+			tab."NbEx" = smallint(colCsv[31])
+		endif
+		tab."Appreciation" = colCsv[32]
+		if colCsv[33] <> "" then
+			tab."Codebarre" = number(colCsv[33])
+		endif
+		tab."AdrInternet" = colCsv[34]
+		tab."Pays Ville" = colCsv[36]
+		tab."Tomaison" = colCsv[37]
+		tab."Periodicite" = colCsv[44]
+		tab."Systeme" = colCsv[47]
+		tab."Version" = colCsv[48]
+		tab."Son" = colCsv[49]
+		tab."Pellicule" = colCsv[50]
+		tab."Info" = colCsv[51]
+		tab."NumNotice" = colCsv[52]
+		tab."NomFichierNotice" = colCsv[55]
+		tab."NomOrigineNotice" = colCsv[56]
+		tab."Alpha1" = colCsv[57]
+		tab."Alpha2" = colCsv[58]
+		tab."Alpha3" = colCsv[59]
+		if colCsv[60] <> "" then
+			tab."Num1" = number(colCsv[60])
+		endif
+		if colCsv[61] <> "" then
+			tab."Num2" = number(colCsv[61])
+		endif
+		tab."Public" = colCsv[63]
+		nbrTab = nbrTab + 1
+		hdlLog.writeLine("Référence " + colCsv[01] + " mise à jour")
+	else
+		nbrAno = nbrAno + 1
+		hdlLog.writeLine("Anomalie : référence " + colCsv[01] + "inconnue dans la table " + nomTab)
+	endif
+endwhile
+
+tab.close()
+
+hdlCsv.close()
+
+hdlLog.writeLine("")
+hdlLog.writeLine(strval(nbrCsv) + " ligne(s) lue(s) dans le fichier CSV")
+hdlLog.writeLine(strval(nbrTit) + " ligne de titre")
+hdlLog.writeLine(strval(nbrTab) + " ligne(s) écrite(s) dans la table " + nomTab)
+hdlLog.writeLine(strval(nbrAno) + " anomalie(s) détectée(s)")
+hdlLog.writeLine("Voir le détail dans " + ficLog)
+
+hdlLog.writeLine("")
+hdlLog.writeLine("Fin du traitement (" + strval(today()) + "-" + strval(time()) + ")")
+hdlLog.writeLine("")
+
+hdlLog.close()
+
+if nbrAno > 0 then
+	msginfo(nomScr, "Fin du traitement"
+		+ chr(10) + strval(nbrCsv) + " ligne(s) lue(s) dans le fichier CSV"
+		+ chr(10) + strval(nbrTit) + " ligne de titre"
+		+ chr(10) + strval(nbrTab) + " ligne(s) écrite(s) dans la table " + nomTab
+		+ chr(10) + strval(nbrAno) + " anomalie(s) détectée(s)"
+		+ chr(10) + "Détail dans " + ficLog)
+else
+	msginfo(nomScr, "Fin du traitement"
+		+ chr(10) + strval(nbrCsv) + " ligne(s) lue(s) dans le fichier CSV"
+		+ chr(10) + strval(nbrTit) + " ligne de titre"
+		+ chr(10) + strval(nbrTab) + " ligne(s) écrite(s) dans la table " + nomTab
+		+ chr(10) + " 0 anomalie détectée")
+endif
