@@ -1,0 +1,7 @@
+# Ignore les répertoires
+/Documentation/
+# Ignore les fichiers ou répertoires
+*.swp
+# A l'exception du fichier foo.txt
+# !foo.txt
+
