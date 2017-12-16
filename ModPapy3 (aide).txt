@@ -1,0 +1,46 @@
+Modification d'une base dans Papyrus 2000
+=========================================
+
+
+Précaution
+----------
+
+Avant d'importer, pour prévenir de tout incident, il faut faire une sauvegarde de Papyrus 2000.
+
+
+Généralité
+----------
+
+Pour une modification, on part du modèle de fichier d'importation LibreOffice (.ODS) ou Excel (.XLS ou .XLSX). Exemple : "ImpPapy3 (modèle).xls".
+
+On peut aussi partir d'un fichier d'export via "Papyrus 2000 > Fichier > Exporter... > Exporter la base Papyrus > Exporter la base entière > La base Papyrus complète > Format Excel". Le fichier ExpPapy3.xls se trouve dans "C:\Bib\Pap\Papyrus\Export\".
+
+
+Attention
+---------
+
+Une colonne comportant un code non présent dans les tables ne sera pas modifiée. Avant une modification, les tables de référence doivent être renseignées des nouveaux codes.
+
+Une colonne ne sera pas modifié si son contenu dépasse sa longueur maximale. Les colonnes et longueur sont décrites dans "Papyrus 2000 > Spécifique > Créer ou modifier un script > Affichage de la structure des tables".
+
+
+Modification via LibreOffice et le script ModPapy3
+--------------------------------------------------
+
+Actions à faire dans LibreOffice :
+- Supprimer les ";".
+- Remplacer ":" par "-".
+
+Lorsque le fichier est terminé, on le sauvegarde en CSV, en conservant les titres de colonne. Avec LibreOffice, sous Linux, il faut le générer au format "Europe occidentale (Windows-1252/WinLatin1)", avec le caractère ";" comme séparateur de colonnes.
+
+Actions à faire dans le fichier CSV :
+- Remplacer "; " par ";".
+- Remplacer " ;" par ";".
+- Remplacer "( " par "(".
+- Remplacer " )" par ")".
+- Remplacer "  " par " ".
+- Remplacer " ," par ",".
+- Remplacer "-" long par "-" court.
+
+On lance le script de mise à jour de la table : "Papyrus 2000 > Spécifique > ModPapy3".
+
