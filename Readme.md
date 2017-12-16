@@ -36,5 +36,5 @@ La version courante est la 1.0.
 Note
 ----
 
-J'ai aussi créé le script [ImpPapy3](https://github.com/bmarcant/ImpPapy3.git) pour importer des documents dans Papyrus2000.
+J'ai aussi créé le script [ImpPapy3](https://github.com/bmarcant/ImpPapy3_2.git) pour importer des documents dans Papyrus2000.
 
